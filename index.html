@@ -19,7 +19,7 @@
 html, body { margin: 0; height: 100%; background: #1c1a19; color: #fff; font-family: Inter, "Helvetica Neue", Arial, sans-serif; font-size: 15px; line-height: 1.55; }
 [hidden] { display: none !important; }
 :root { --ust: env(safe-area-inset-top, 0px); }
-.giris { --g: min(264px, 66vw); position: fixed; inset: 0; z-index: 50; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center;
+.giris { --g: min(264px, 66vw); position: fixed; top: 0; left: 0; right: 0; height: var(--ekran, 100%); z-index: 50; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center;
   background: radial-gradient(ellipse 80% 55% at 50% 44%, #2a2622 0%, #1c1a19 70%); padding: calc(var(--ust) + 40px) 28px calc(env(safe-area-inset-bottom, 0px) + 96px);
   text-align: center; cursor: pointer; transition: opacity .32s ease; }
 .giris::before { content: ""; position: absolute; inset: calc(var(--ust) + 14px) 14px calc(env(safe-area-inset-bottom, 0px) + 14px); border: 1px solid rgba(184, 150, 74, .38); pointer-events: none; }
@@ -68,7 +68,7 @@ button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   <small><i>Bu uygulama yalnızca Atıl Hukuk Bürosu'nun izin verdiği kişilerin kullanımı içindir.</i></small>
 </main>
 <script>
-try { if (window.navigator.standalone === true) { (function () { var o = document.createElement("div"); o.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;padding-top:env(safe-area-inset-top,0px)"; document.body.appendChild(o); var u = parseFloat(getComputedStyle(o).paddingTop) || 0; document.body.removeChild(o); if (u < 20) document.documentElement.style.setProperty("--ust", (window.screen.height >= 800 ? 54 : 24) + "px"); })(); } } catch (e) {}
+try { if (window.navigator.standalone === true) { (function () { var ekran = function () { var w = window.screen.width, h = window.screen.height, yatay = window.innerWidth > window.innerHeight; document.documentElement.style.setProperty("--ekran", (yatay ? Math.min(w, h) : Math.max(w, h)) + "px"); }; ekran(); window.addEventListener("resize", ekran); var o = document.createElement("div"); o.style.cssText = "position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;padding-top:env(safe-area-inset-top,0px)"; document.body.appendChild(o); var u = parseFloat(getComputedStyle(o).paddingTop) || 0; document.body.removeChild(o); if (u < 20) document.documentElement.style.setProperty("--ust", (window.screen.height >= 800 ? 54 : 24) + "px"); })(); } } catch (e) {}
 </script>
 <script>
 /* İçerik şifreli olarak yayımlanır (icerik.json). Parola, kilit.json'daki özel anahtarı açar; o da içeriğin anahtarını çözer.
