@@ -51,6 +51,9 @@ html, body { margin: 0; height: 100%; background: #1c1a19; color: #fff; font-fam
 .giris small { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 32px); font-size: 11px; line-height: 1.5; letter-spacing: .04em; color: #8f887c; padding-inline: 32px; display: flex; flex-direction: column; gap: 6px; }
 .giris small i { font-style: normal; letter-spacing: 0; color: #7d766b; }
 .giris { cursor: default; }
+@keyframes gel { from { opacity: 0; } to { opacity: 1; } }
+#devam, #veri { animation: gel .45s ease both; }
+@media (prefers-reduced-motion: reduce) { #devam, #veri { animation: none; } }
 .giris .bekle { margin: 44px 0 0; min-height: 48px; line-height: 48px; font-size: 13px; color: #a59e92; }
 form { margin-top: 30px; width: min(300px, 100%); display: flex; flex-direction: column; gap: 12px; }
 label { font-size: 10.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #b8964a; text-align: left; }
@@ -81,7 +84,8 @@ try { if (window.navigator.standalone === true) { (function () { var ekran = fun
     <p class="durum" id="durum" role="alert"></p>
   </form>
   <p class="bekle" id="bekle">Açılıyor…</p>
-  <small><i>Bu uygulama yalnızca Atıl Hukuk Bürosu'nun izin verdiği kişilerin kullanımı içindir.</i></small>
+  <button type="button" id="devam" hidden>Devam et</button>
+  <small><span id="veri" hidden></span><i>Bu uygulama yalnızca Atıl Hukuk Bürosu'nun izin verdiği kişilerin kullanımı içindir.</i></small>
 </main>
 
 <script>
@@ -104,6 +108,15 @@ try { if (window.navigator.standalone === true) { (function () { var ekran = fun
       .then(function (d) { return new TextDecoder("utf-8").decode(d); });
   }
   function ac(html, atla) { window.__kabuk = true; if (atla) window.__girisAtla = true; document.open(); document.write(html); document.close(); }
+  /* Kayıtlı parolayla açıldığında karşılama ekranı bu sayfanın kendisidir: düğme belirir, dokununca araçlar açılır. */
+  function hazir(html) {
+    var d = document.getElementById("devam"), v = document.getElementById("veri"), m = /VERI_TARIHI\s*=\s*"(\d{4})-(\d{2})-(\d{2})"/.exec(html), acildi = false;
+    function git() { if (acildi) return; acildi = true; ac(html, true); }
+    if (m) { v.textContent = "Veriler " + m[3] + "." + m[2] + "." + m[1] + " itibarıyla günceldir"; v.hidden = false; }
+    bekle.hidden = true; d.hidden = false; d.addEventListener("click", git);
+    document.querySelector(".giris").style.cursor = "pointer"; document.querySelector(".giris").addEventListener("click", git);
+    document.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") git(); });
+  }
   function sor(mesaj) { bekle.hidden = true; form.hidden = false; durum.textContent = mesaj || ""; dugme.disabled = false; try { giris.focus(); } catch (e) {} }
   function kayitli() { try { var j = JSON.parse(localStorage.getItem(SAKLA) || "null"); return j && j.kimlik === kilit.kimlik ? j.a : null; } catch (e) { return null; } }
   if (!(window.crypto && crypto.subtle)) { bekle.textContent = "Bu tarayıcı desteklenmiyor. Sayfayı Safari ya da Chrome'un güncel sürümüyle açın."; return; }
@@ -113,7 +126,7 @@ try { if (window.navigator.standalone === true) { (function () { var ekran = fun
     var a = kayitli(), eski = false;
     try { eski = !a && !!localStorage.getItem(SAKLA); if (eski) localStorage.removeItem(SAKLA); } catch (e) {}
     if (!a) return sor(eski ? "Parola değişti. Yeni parolayı girin." : "");
-    coz(b64(a)).then(function (h) { ac(h, false); }, function () { try { localStorage.removeItem(SAKLA); } catch (e) {} sor("Parola değişti. Yeni parolayı girin."); });
+    coz(b64(a)).then(hazir, function () { try { localStorage.removeItem(SAKLA); } catch (e) {} sor("Parola değişti. Yeni parolayı girin."); });
   }, function () { bekle.textContent = "İçerik yüklenemedi. İnternet bağlantınızı kontrol edip sayfayı yenileyin."; });
   form.addEventListener("submit", function (e) {
     e.preventDefault(); var p = giris.value; if (!p || !kilit) return;
