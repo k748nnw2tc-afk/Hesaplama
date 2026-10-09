@@ -112,6 +112,7 @@ try { if (window.navigator.standalone === true) { (function () { var ekran = fun
   function hazir(html) {
     var d = document.getElementById("devam"), v = document.getElementById("veri"), m = /VERI_TARIHI\s*=\s*"(\d{4})-(\d{2})-(\d{2})"/.exec(html), acildi = false;
     function git() { if (acildi) return; acildi = true; ac(html, true); }
+    try { var n = performance.getEntriesByType("navigation")[0]; if (n && n.type === "reload" && sessionStorage.getItem("atil-sekme")) return git(); } catch (e) {} /* sayfa yenilendiyse karşılama ekranı atlanır, kalınan sekme açılır */
     if (m) { v.textContent = "Veriler " + m[3] + "." + m[2] + "." + m[1] + " itibarıyla günceldir"; v.hidden = false; }
     bekle.hidden = true; d.hidden = false; d.addEventListener("click", git);
     document.querySelector(".giris").style.cursor = "pointer"; document.querySelector(".giris").addEventListener("click", git);
