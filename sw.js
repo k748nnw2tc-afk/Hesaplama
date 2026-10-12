@@ -1,6 +1,6 @@
 /* Atıl Hukuk Hesaplama Araçları: çevrimdışı çalışma.
    Giriş sayfası ve şifreli içerik: önce ağdan (güncel sürüm), ağ yoksa saklanan kopya. Diğer dosyalar: önce saklanan kopya. */
-var SURUM = "5158f72dce2b";
+var SURUM = "8f76511c36b3";
 var ONBELLEK = "atil-hesaplama-v2";
 var IC = ["./", "icerik.json", "kilit.json", "manifest.webmanifest", "jspdf.umd.min.js", "jspdf.plugin.autotable.min.js", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "favicon.png"];
 self.addEventListener("install", function (e) {
