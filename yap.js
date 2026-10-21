@@ -10,8 +10,12 @@ if (!kaynakYol) { console.error("Kullanım: node yap.js <sayfa.html>"); process.
 let k = fs.readFileSync(kaynakYol, "utf8");
 const i = k.indexOf("<title>"); if (i < 0) { console.error("<title> bulunamadı."); process.exit(1); }
 k = k.slice(i).replace(/\s*<\/body>\s*<\/html>\s*$/, "");
-for (const p of ['id="giris"', 'id="p-ana"', 'id="yazi-tipleri"', "var VERI_TARIHI", "window.__girisAtla", 'class="taban"'])
+for (const p of ['id="giris"', 'id="p-ana"', 'id="yazi-tipleri"', "var VERI_TARIHI", "window.__girisAtla", 'class="taban"', 'id="p-kanun"', "var KANUN_ANAHTAR"])
   if (!k.includes(p)) { console.error("Eksik bölüm: " + p); process.exit(1); }
+{ /* Kanunlar sekmesinin şifreli dosyaları depoda olmalı (bkz. kanun.js) */
+  const l = /var KANUNLAR = (\[.*?\]);/.exec(k); if (!l) { console.error("KANUNLAR bulunamadı."); process.exit(1); }
+  for (const x of JSON.parse(l[1])) for (const t of ["json", "pdf"])
+    if (!fs.existsSync(path.join(D, "kanun", x.no + "." + t + ".bin"))) { console.error("Eksik kanun dosyası: kanun/" + x.no + "." + t + ".bin — önce node kanun.js çalıştırın."); process.exit(1); } }
 const t = k.indexOf("</title>") + "</title>".length, j = k.indexOf('<div class="giris"');
 const bas = k.slice(0, t), kafa = k.slice(t, j); let govde = k.slice(j);
 for (const [uzak, yerel] of [["https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js", "jspdf.umd.min.js"],
